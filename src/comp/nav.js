@@ -17,7 +17,7 @@ const items = [
     },
     {
         key: 'sub3',
-        label: <Link to="/product">Sản phẩm</Link>,
+        label: <Link to="/product/empty-product">Sản phẩm</Link>,
         icon: <TagOutlined />,
     }
 ];

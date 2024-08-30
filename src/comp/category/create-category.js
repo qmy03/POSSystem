@@ -1,4 +1,4 @@
-import { React, useState } from 'react';
+import React, { useState } from 'react';
 import './create-category.css';
 import {
     ArrowLeftOutlined, UndoOutlined, RedoOutlined, DownOutlined,
@@ -6,9 +6,12 @@ import {
     BoldOutlined, ItalicOutlined, UnderlineOutlined, StrikethroughOutlined,
     CodeOutlined, ClearOutlined, UnorderedListOutlined, OrderedListOutlined,
     LinkOutlined, FileImageOutlined,
-    InboxOutlined
 } from '@ant-design/icons';
 import { Input, Button, ColorPicker, Space, Select, message, Upload } from 'antd';
+import { useNavigate } from 'react-router';
+import { Editor, EditorState, RichUtils, getDefaultKeyBinding, KeyBindingUtil } from 'draft-js';
+import 'draft-js/dist/Draft.css';
+
 const { Dragger } = Upload;
 const { TextArea } = Input;
 
@@ -18,7 +21,6 @@ const props = {
     action: 'https://660d2bd96ddfa2943b33731c.mockapi.io/api/upload',
     onChange(info) {
         const { status } = info.file;
-        console.log(info);
         if (status !== 'uploading') {
             console.log(info.file, info.fileList);
         }
@@ -34,6 +36,11 @@ const props = {
 };
 
 const CreateCategory = () => {
+    const navigate = useNavigate();
+    const handleCategory = () => {
+        navigate('/category/category-page');
+    };
+    const [editorState, setEditorState] = useState(EditorState.createEmpty());
     const [open, setOpen] = useState(false);
 
     const options = [
@@ -45,13 +52,17 @@ const CreateCategory = () => {
     const options1 = [
         { label: 'Đang hoạt động', value: 'Đang hoạt động' },
         { label: 'Ngoại tuyến', value: 'Ngoại tuyến' },
-    ]
+    ];
+
+    const handleFormat = (style) => {
+        setEditorState(RichUtils.toggleInlineStyle(editorState, style));
+    };
 
     return (
         <div className='create-category'>
             <div className='container'>
                 <div className='frame'>
-                    <Button className='item' icon={<ArrowLeftOutlined />} />
+                    <Button className='item' onClick={handleCategory} icon={<ArrowLeftOutlined />} />
                     <p>Tạo danh mục sản phẩm</p>
                 </div>
                 <div className='content'>
@@ -82,19 +93,22 @@ const CreateCategory = () => {
                                     style={{ width: 43 }}
                                     options={options}
                                 />
-                                <Button icon={<BoldOutlined />} />
-                                <Button icon={<ItalicOutlined />} />
-                                <Button icon={<UnderlineOutlined />} />
-                                <Button icon={<StrikethroughOutlined />} />
-                                <Button icon={<CodeOutlined />} />
+                                <Button icon={<BoldOutlined />} onClick={() => handleFormat('BOLD')} />
+                                <Button icon={<ItalicOutlined />} onClick={() => handleFormat('ITALIC')} />
+                                <Button icon={<UnderlineOutlined />} onClick={() => handleFormat('UNDERLINE')} />
+                                <Button icon={<StrikethroughOutlined />} onClick={() => handleFormat('STRIKETHROUGH')} />
+                                <Button icon={<CodeOutlined />} onClick={() => handleFormat('CODE')} />
                                 <Button icon={<ClearOutlined />} />
                                 <Button icon={<UnorderedListOutlined />} />
                                 <Button icon={<OrderedListOutlined />} />
                                 <Button icon={<LinkOutlined />} />
                                 <Button icon={<FileImageOutlined />} />
                             </div>
-                            <div className='contents-area'>
-                                <TextArea rows={4} />
+                            <div className='editor-container' style={{ fontSize: '14px'}}>
+                                <Editor
+                                    editorState={editorState}
+                                    onChange={setEditorState}
+                                />
                             </div>
                         </div>
                     </div>
@@ -115,7 +129,7 @@ const CreateCategory = () => {
                             <Space>
                                 <Dragger {...props}>
                                     <p className="ant-upload-drag-icon">
-                                        <FileImageOutlined style={{ fontSize: '30px', maxWidth: '326px', justifyContent: 'center' }} />
+                                        <FileImageOutlined style={{ fontSize: '30px', maxWidth: '326px', justifyContent: 'center', color:'#4F46E5' }} />
                                     </p>
                                     <p className="ant-upload-hint">Thêm hình ảnh</p>
                                 </Dragger>
@@ -124,8 +138,8 @@ const CreateCategory = () => {
                     </div>
                 </div>
                 <div className='action-box'>
-                    <Button>Hủy bỏ</Button>
-                    <Button>Tạo</Button>
+                    <Button onClick={handleCategory} style={{ color: '#1F2937', border: '1px solid #9CA3AF' }}>Hủy bỏ</Button>
+                    <Button onClick={handleCategory} style={{ backgroundColor: '#4F46E5', color: '#FFF', border: 'none' }}>Tạo</Button>
                 </div>
             </div>
         </div>
